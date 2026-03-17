@@ -57,7 +57,8 @@ This timeline is a guide; actual dates can be updated as you progress.
 
 **Data approach:**
 
-- **Source:** Curated, static content (e.g. from official tourism sites, Wikipedia, or trusted guides). Fetched or copied once, then saved as **markdown or JSON** in `data/raw/`.
+- **Geographic scope (initial):** Focus on a **small set of key districts** first (e.g. Mitte, Kreuzberg, Prenzlauer Berg, Friedrichshain), then extend to more of Berlin if time allows.
+- **Source:** Curated, static content (e.g. from official tourism sites, Wikipedia, or trusted guides). Fetched or copied once, then saved as **markdown** in `data/raw/`.
 - **Storage:** Files in `data/raw/`; no database or external API at query time.
 - **Pipeline:** Ingest → chunk (by section/place/theme) → embed → store in Chroma under `data/vectorstore/`. Retrieval runs only over this static index.
 

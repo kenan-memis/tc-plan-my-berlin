@@ -6,4 +6,9 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
   "streamlit",
+  "langchain",
+  "langchain-openai",
+  "langchain-community",
+  "langchain-text-splitters",
+  "chromadb",
 ]
