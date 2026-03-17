@@ -64,15 +64,9 @@ OPENAI_API_KEY=sk-your-key-here
 
 Make sure `.env` is **never committed** (it should be in `.gitignore`).
 
-### 4. Run the app (temporary entry)
+### 4. Run the app (minimal homepage)
 
-For now, you can confirm the environment is working with:
-
-```bash
-uv run python main.py
-```
-
-Later, once the Streamlit UI is implemented, this will change to something like:
+To confirm the setup works and see the minimal homepage, run:
 
 ```bash
 uv run streamlit run planmyberlin/ui/app.py

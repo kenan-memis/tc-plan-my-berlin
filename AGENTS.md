@@ -9,7 +9,7 @@ It helps visitors design realistic day-by-day plans tailored to interests, budge
 - Package & env management: uv (no requirements.txt)
 - UI: Streamlit
 - LLM / orchestration: LangChain (OpenAI models)
-- Vector store: TBD (likely Chroma or FAISS; must support local development)
+- Vector store: Chroma (local, persisted under `data/vectorstore/`)
 
 ## Conventions and rules
 - Secrets: API keys and credentials live in `.env` and are never committed.

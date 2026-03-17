@@ -45,6 +45,24 @@ This timeline is a guide; actual dates can be updated as you progress.
 - **MVP:** Single-page Streamlit app where the user enters trip preferences, clicks a button, and gets a day-by-day itinerary plus a rough budget for a fixed number of days.  
 - **Then:** Add more flexible profiles (different day counts, interests), better explanations, and optional features once the core flow is solid.
 
+### 1.5 RAG knowledge base: data scope and sources
+
+**In-scope for the corpus (saved as files under `data/raw/`, then embedded):**
+
+| Content type | Scope | Rationale |
+|--------------|--------|-----------|
+| **Restaurants** | Curated list of Berlin restaurants (by area, cuisine, budget tier). | JTL suggestion; easy to source and chunk; directly supports “where to eat” in itineraries. |
+| **Popular places / sights** | Must-see attractions, museums, neighbourhood highlights (e.g. Mitte, Kreuzberg, Prenzlauer Berg, Friedrichshain). | Core of “what to do”; pairs well with itinerary and budget tools. |
+| **Transport (high-level only)** | Overview of Berlin transport: zones (A/B/C), main ticket types (e.g. day ticket, WelcomeCard), key U‑Bahn/S‑Bahn lines and how they connect areas. **No** real-time schedules or live APIs. | Keeps itineraries realistic (how to get between areas) without the complexity of live/GTFS data. |
+
+**Data approach:**
+
+- **Source:** Curated, static content (e.g. from official tourism sites, Wikipedia, or trusted guides). Fetched or copied once, then saved as **markdown or JSON** in `data/raw/`.
+- **Storage:** Files in `data/raw/`; no database or external API at query time.
+- **Pipeline:** Ingest → chunk (by section/place/theme) → embed → store in Chroma under `data/vectorstore/`. Retrieval runs only over this static index.
+
+**Out of scope for now:** Real-time transport (live departures, route planning APIs), bookings, payments, or dynamic pricing.
+
 ---
 
 ## 2. Understanding core concepts (for presentation)
