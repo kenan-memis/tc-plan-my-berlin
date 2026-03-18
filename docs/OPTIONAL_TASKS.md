@@ -145,6 +145,6 @@ We intentionally did **not** add PDF to keep dependencies/time within Sprint 2 s
 
 ### Hard #9 — Implement an evaluation of your RAG system, using RAGAs or otherwise
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** Added a RAG evaluation harness using **RAGAs**. The script `planmyberlin/eval/run_ragas_eval.py` builds a small dataset of Berlin trip queries, runs the app’s TripProfile parsing + retrieval + deterministic itinerary tools to produce `(question, answer, contexts)`, and then evaluates with RAGAs metrics: `faithfulness`, `answer_relevancy`, `context_precision`, and `context_recall`. Raw results and a readable summary are saved under `planmyberlin/eval/results/`.
 
