@@ -76,8 +76,8 @@ This satisfies “interactive help / chatbot guide” at an easy, stable MVP lev
 
 ### Medium #6 — Add visualisation of tool call results
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** Added a “Tool call results visualization” expander in the Streamlit UI. It now shows the `area_organiser` intermediate output (“daily slots”) plus the raw outputs from `budget_estimator` and `transport_adviser` (as structured JSON), improving explainability for reviewers.
 
 ### Medium #7 — Implement conversation export in various formats (PDF, CSV, JSON)
 

@@ -32,6 +32,7 @@ def plan_itinerary_from_request(user_text: str) -> Dict[str, Any]:
     return {
         "profile": profile,
         "itinerary": itinerary,
+        "slots": slots,
         "budget": budget,
         "transport": transport,
         "rag_debug": rag_debug,

@@ -20,6 +20,7 @@ from planmyberlin.tools.pipeline import plan_itinerary_from_request
 
 MAX_INPUT_CHARS: Final[int] = 800
 MAX_REQUESTS_PER_SESSION: Final[int] = 15
+PIPELINE_CACHE_VERSION: Final[str] = "v2"  # bump when pipeline output schema changes
 INJECTION_PHRASES: Final[tuple[str, ...]] = (
     "ignore previous instructions",
     "ignore all previous instructions",
@@ -35,7 +36,7 @@ logger = logging.getLogger("planmyberlin")
 
 
 @st.cache_data(show_spinner=False, ttl=3600)
-def get_plan_cached(user_text: str) -> dict:
+def get_plan_cached(user_text: str, cache_version: str) -> dict:
     """
     Cache full pipeline results for identical requests.
     This reduces repeated LLM calls + retrieval costs during repeated UI interactions.
@@ -182,7 +183,7 @@ def main() -> None:
         st.session_state["last_request"] = text
         with st.spinner("Building your plan (parsing request, retrieving places, building itinerary)…"):
             try:
-                result = get_plan_cached(text)
+                result = get_plan_cached(text, PIPELINE_CACHE_VERSION)
                 st.session_state["last_result"] = result
                 history = st.session_state.get("history", [])
                 history.append({"request": text, "result": result})
@@ -206,6 +207,8 @@ def main() -> None:
     transport = result.get("transport") or {}
     rag_debug = result.get("rag_debug") or {}
     context = result.get("context") or {}
+    slots_raw = result.get("slots")
+    slots = slots_raw or []
 
     # Profile summary
     with st.expander("Trip profile (how we understood your request)", expanded=False):
@@ -254,6 +257,56 @@ def main() -> None:
                     st.code(preview)
 
     # Itinerary by day
+    with st.expander("Tool call results visualization (slots, budget, transport)", expanded=False):
+        if slots:
+            # Keep the view readable: don't dump long content snippets from retrieved docs.
+            trimmed_slots = []
+            for slot in slots:
+                trimmed_slot = {
+                    "day": slot.get("day", 0),
+                    "districts": slot.get("districts") or [],
+                    "sights": [],
+                    "restaurants": [],
+                }
+                for s in slot.get("sights") or []:
+                    trimmed_slot["sights"].append(
+                        {
+                            "name": s.get("name"),
+                            "neighbourhood": s.get("neighbourhood"),
+                            "citation": s.get("citation"),
+                        }
+                    )
+                for r in slot.get("restaurants") or []:
+                    trimmed_slot["restaurants"].append(
+                        {
+                            "name": r.get("name"),
+                            "neighbourhood": r.get("neighbourhood"),
+                            "price_level": r.get("price_level"),
+                            "citation": r.get("citation"),
+                        }
+                    )
+                trimmed_slots.append(trimmed_slot)
+
+            st.markdown("**Area organiser output (daily slots)**")
+            st.json({"slots": trimmed_slots})
+        else:
+            if slots_raw is None:
+                st.info(
+                    "Slots are missing from this generated plan result. "
+                    "This typically happens when an older cached run (created before the pipeline returned `slots`) is reused. "
+                    "Click `Generate plan` again (or reload the page) to regenerate with the latest pipeline schema."
+                )
+            else:
+                st.info("Slots are empty for this generated plan.")
+
+        st.divider()
+        st.markdown("**Budget estimator output**")
+        st.json(budget)
+
+        st.divider()
+        st.markdown("**Transport adviser output**")
+        st.json(transport)
+
     st.subheader("Your itinerary")
     days = itinerary.get("days") or []
     for day_data in days:

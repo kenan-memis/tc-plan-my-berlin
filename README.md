@@ -117,6 +117,7 @@ For maximum bonus points, the goal is at least **2 medium** and **1 hard** (or m
 ### Medium
 
 - ✅ **3. Implement advanced caching strategies** – The UI caches pipeline results (`st.cache_data`) for up to 1 hour to avoid repeated LLM + retrieval calls for identical requests.
+- ✅ **6. Add visualisation of tool call results** – The UI visualises intermediate tool outputs (daily slots) and shows the structured results from the budget and transport tools in a dedicated expander.
 
 ### Hard
 
