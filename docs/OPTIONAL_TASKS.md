@@ -36,8 +36,12 @@ Implementation-wise, the retrieval queries and preview snippets are generated in
 
 ### Easy #4 — Add an interactive help feature or chatbot guide
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** Added an in-UI **request helper** expander (“Help me write my request”). It includes:
+  - 4 clickable **example prompts** that fill the main request box via `st.session_state` and re-run the page.
+  - A lightweight **template builder** (days, budget level, pace, districts, interests, food style, transport preference) that composes a well-structured request string without additional LLM calls.
+
+This satisfies “interactive help / chatbot guide” at an easy, stable MVP level by helping users provide better inputs for PlanMyBerlin.
 
 ---
 

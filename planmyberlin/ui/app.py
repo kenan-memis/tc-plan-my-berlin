@@ -53,12 +53,82 @@ def main() -> None:
     # Preferences / free-text input
     user_text = st.text_area(
         "Your trip request",
-        value=st.session_state.get("last_request", "2 days in Berlin, budget-friendly, mix cheap lunch and nicer dinner"),
+        value=st.session_state.get("last_request", ""),
         height=100,
         max_chars=MAX_INPUT_CHARS,
         placeholder="e.g. 3 days, museums and street food, low budget, relaxed pace in Mitte and Kreuzberg",
         help="Natural language: days, budget, interests, districts, pace.",
     )
+
+    # Easy #4 (MVP A): request helper UI
+    with st.expander("Help me write my request", expanded=False):
+        st.markdown(
+            "Click an example or use the template to generate a good request format. "
+            "The planner supports districts, budget level, pace, and a food style like "
+            "`mix cheap lunch and nicer dinner`."
+        )
+
+        example_prompts = [
+            "2 days, budget-friendly, mix cheap lunch and nicer dinner, Kreuzberg and Mitte, only by metro",
+            "3 days, culture + museums, medium budget, relaxed pace in Prenzlauer Berg and Friedrichshain",
+            "2 days, low budget, street food and parks, packed pace in Kreuzberg and Neukölln",
+            "1 day, high budget, museums and classic sights, balanced pace in Mitte",
+        ]
+        example_cols = st.columns(len(example_prompts))
+        for i, ex in enumerate(example_prompts):
+            with example_cols[i]:
+                if st.button(f"Example {i+1}", key=f"ex_{i}"):
+                    st.session_state["last_request"] = ex
+                    st.session_state.pop("last_result", None)
+                    st.rerun()
+
+        st.divider()
+
+        # Template builder (no extra LLM calls, just string composition)
+        st.markdown("### Template builder")
+        known_districts = ["Mitte", "Kreuzberg", "Prenzlauer Berg", "Friedrichshain", "Neukölln", "Charlottenburg"]
+
+        colA, colB = st.columns(2)
+        with colA:
+            num_days = st.selectbox("Days", options=[1, 2, 3, 4, 5], index=1)
+            budget_level = st.selectbox("Budget level", options=["low", "medium", "high"], index=1)
+        with colB:
+            pace = st.selectbox("Pace", options=["relaxed", "balanced", "packed"], index=1)
+
+        dist_sel = st.multiselect("Districts (pick 1–3)", options=known_districts, default=["Kreuzberg", "Mitte"])
+        interest_opts = ["museums", "culture", "parks", "street food", "history", "nightlife"]
+        interests_sel = st.multiselect("Interests", options=interest_opts, default=["museums", "street food"])
+
+        food_style = st.selectbox(
+            "Food style",
+            options=["cheap_lunch_nicer_dinner", "always_budget", "mixed"],
+            index=0,
+        )
+        transport_pref = st.selectbox("Transport preference", options=["no preference", "only by metro", "public transport", "walking"], index=0)
+
+        if st.button("Build request from template"):
+            districts_text = " and ".join(dist_sel) if dist_sel else "Mitte and Kreuzberg"
+            interests_text = ", ".join(interests_sel) if interests_sel else "sights and food"
+            food_phrase = {
+                "cheap_lunch_nicer_dinner": "mix cheap lunch and nicer dinner",
+                "always_budget": "always budget",
+                "mixed": "mixed meals",
+            }.get(food_style, "mixed meals")
+            transport_phrase = ""
+            if transport_pref == "only by metro":
+                transport_phrase = ", only by metro"
+            elif transport_pref == "public transport":
+                transport_phrase = ", public transport"
+            elif transport_pref == "walking":
+                transport_phrase = ", walking"
+
+            built = (
+                f"{num_days} days, {budget_level} budget, {interests_text}, {pace} pace "
+                f"in {districts_text}, {food_phrase}{transport_phrase}"
+            )
+            st.session_state["last_request"] = built
+            st.session_state.pop("last_result", None)
+            st.rerun()
 
     col1, col2, col3 = st.columns([1, 1, 2])
     with col1:
