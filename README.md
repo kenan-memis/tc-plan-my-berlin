@@ -73,6 +73,12 @@ uv run streamlit run planmyberlin/ui/app.py
 ```
 
 ---
+## Deployment
+
+**Live app (production):** https://plan-my-berlin-916698433185.europe-west10.run.app/
+
+To deploy **PlanMyBerlin** to **Google Cloud Run** (including Docker image build/push, Cloud Run “proper scaling”, and setting secrets), see `docs/DEPLOYMENT.md`.
+---
 
 ## Project structure (early)
 
@@ -137,3 +143,7 @@ For maximum bonus points, the goal is at least **2 medium** and **1 hard** (or m
 - **8. Implement your tools (functions) as MCP servers** – Not implemented yet.
 - **9. Implement an evaluation of your RAG system (RAGAs or otherwise)** – Not implemented yet.
 
+---
+## License and course context
+
+This project is part of the Turing College AI Engineering course, Sprint 2. It is for learning and portfolio purposes.

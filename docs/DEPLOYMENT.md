@@ -8,6 +8,11 @@ This document describes how to deploy **PlanMyBerlin** to **Google Cloud Run** u
 - You store secrets in **Secret Manager**.
 - The container image is built from the repo root at `kmemis-AE.2.5/` (this folder is your project).
 
+---
+## Live app (production)
+
+https://plan-my-berlin-916698433185.europe-west10.run.app/
+
 ## 1) Build & push the container image
 
 From the repo root (`plan-my-berlin/`):
