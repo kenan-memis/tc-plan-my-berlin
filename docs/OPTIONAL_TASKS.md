@@ -71,8 +71,8 @@ This satisfies “interactive help / chatbot guide” at an easy, stable MVP lev
 
 ### Medium #5 — Calculate and display token usage and costs
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** Added token/cost visibility in the Streamlit UI. The backend now captures OpenAI token usage via LangChain’s `get_openai_callback` during the planning pipeline run and returns it as `token_usage`, which is rendered in a dedicated expander (“Token usage & estimated cost”). The value is also included in the exported plan JSON.
 
 ### Medium #6 — Add visualisation of tool call results
 

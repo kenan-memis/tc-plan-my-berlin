@@ -109,17 +109,31 @@ For maximum bonus points, the goal is at least **2 medium** and **1 hard** (or m
 
 ### Easy
 
-- ✅ **1. Add conversation history and export functionality** – Per-session plan history in the UI plus per-plan JSON and text exports.
-- ✅ **2. Add visualisation of RAG process** – “RAG retrieval debug” expander shows sights/restaurants retrieval queries, top retrieved snippet previews, and per-snippet similarity scores (Chroma distance).
-- ✅ **3. Include source citations in responses** – Inline citations are shown next to each itinerary segment (sight/restaurant) and included in the exported text summary.
-- ✅ **4. Add an interactive help feature or chatbot guide** – “Help me write my request” expander with example prompts + a template builder to compose good trip requests.
+- ✅ **1. Add conversation history and export functionality** – Per-session plan history + JSON/text exports.
+- ✅ **2. Add visualisation of RAG process** – “RAG retrieval debug” expander shows queries + top snippet previews (+ similarity scores).
+- ✅ **3. Include source citations in responses** – Inline citations shown next to itinerary segments + included in text export.
+- ✅ **4. Add an interactive help feature or chatbot guide** – “Help me write my request” expander with examples + a template builder.
 
 ### Medium
 
-- ✅ **3. Implement advanced caching strategies** – The UI caches pipeline results (`st.cache_data`) for up to 1 hour to avoid repeated LLM + retrieval calls for identical requests.
-- ✅ **6. Add visualisation of tool call results** – The UI visualises intermediate tool outputs (daily slots) and shows the structured results from the budget and transport tools in a dedicated expander.
+- **1. Implement multi-model support (OpenAI, Anthropic, etc.)** – Not implemented yet.
+- **2. Add real-time data updates to knowledge base** – Not implemented yet.
+- ✅ **3. Implement advanced caching strategies** – The UI caches pipeline results (`st.cache_data`) for up to 1 hour.
+- **4. Add user authentication and personalisation** – Not implemented yet.
+- ✅ **5. Calculate and display token usage and costs** – Shows token counts + estimated cost (and includes it in JSON export).
+- ✅ **6. Add visualisation of tool call results** – Dedicated expander visualizing intermediate tool outputs (slots, budget, transport).
+- **7. Implement conversation export in various formats (PDF, CSV, JSON)** – Not implemented yet.
+- **8. Connect to tools from a publicly available remote MCP server** – Not implemented yet.
 
 ### Hard
 
-- *(None implemented yet.)*
+- **1. Deploy to cloud with proper scaling** – Not implemented yet.
+- **2. Implement advanced indexing (e.g., RAPTOR, ColBERT)** – Not implemented yet.
+- **3. Implement A/B testing for different RAG strategies** – Not implemented yet.
+- **4. Add automated knowledge base updates** – Not implemented yet.
+- **5. Fine-tune the model for your specific domain** – Not implemented yet.
+- **6. Add multi-language support** – Not implemented yet.
+- **7. Implement advanced analytics dashboard** – Not implemented yet.
+- **8. Implement your tools (functions) as MCP servers** – Not implemented yet.
+- **9. Implement an evaluation of your RAG system (RAGAs or otherwise)** – Not implemented yet.
 

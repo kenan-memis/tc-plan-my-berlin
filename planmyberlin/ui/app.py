@@ -20,7 +20,7 @@ from planmyberlin.tools.pipeline import plan_itinerary_from_request
 
 MAX_INPUT_CHARS: Final[int] = 800
 MAX_REQUESTS_PER_SESSION: Final[int] = 15
-PIPELINE_CACHE_VERSION: Final[str] = "v2"  # bump when pipeline output schema changes
+PIPELINE_CACHE_VERSION: Final[str] = "v3"  # bump when pipeline output schema changes
 INJECTION_PHRASES: Final[tuple[str, ...]] = (
     "ignore previous instructions",
     "ignore all previous instructions",
@@ -209,6 +209,7 @@ def main() -> None:
     context = result.get("context") or {}
     slots_raw = result.get("slots")
     slots = slots_raw or []
+    token_usage = result.get("token_usage") or {}
 
     # Profile summary
     with st.expander("Trip profile (how we understood your request)", expanded=False):
@@ -307,6 +308,18 @@ def main() -> None:
         st.markdown("**Transport adviser output**")
         st.json(transport)
 
+    # Token usage / cost (Medium #5)
+    with st.expander("Token usage & estimated cost", expanded=False):
+        if token_usage:
+            total_tokens = token_usage.get("total_tokens", 0) or 0
+            total_cost = token_usage.get("total_cost")
+            st.metric("Total tokens", f"{int(total_tokens):,}")
+            if total_cost is not None:
+                st.caption(f"Estimated total cost: ${float(total_cost):.6f}")
+            st.json(token_usage)
+        else:
+            st.info("Token usage info is not available for this plan yet.")
+
     st.subheader("Your itinerary")
     days = itinerary.get("days") or []
     for day_data in days:
@@ -359,6 +372,7 @@ def main() -> None:
             "itinerary": itinerary,
             "budget": budget,
             "transport": transport,
+            "token_usage": token_usage,
         },
         indent=2,
         ensure_ascii=False,

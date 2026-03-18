@@ -5,6 +5,7 @@ from __future__ import annotations
 import json as _json
 import sys
 from typing import Any, Dict
+from langchain_community.callbacks import get_openai_callback
 
 from ..rag.planning import plan_from_request
 from .area_organiser import build_daily_slots
@@ -18,16 +19,29 @@ def plan_itinerary_from_request(user_text: str) -> Dict[str, Any]:
     End-to-end: parse request -> retrieve context -> build slots -> itinerary -> budget.
     Returns a single dict with profile, itinerary, budget, and raw context (sights/restaurants).
     """
-    context = plan_from_request(user_text)
-    profile = context["profile"]
-    sights_docs = context["sights"]
-    restaurants_docs = context["restaurants"]
-    rag_debug = context.get("rag_debug") or {}
+    token_usage: Dict[str, Any] = {}
 
-    slots = build_daily_slots(profile, sights_docs, restaurants_docs)
-    itinerary = build_itinerary(profile, slots)
-    budget = estimate_budget(profile, itinerary)
-    transport = build_transport_guidance(profile, itinerary)
+    with get_openai_callback() as cb:
+        context = plan_from_request(user_text)
+        profile = context["profile"]
+        sights_docs = context["sights"]
+        restaurants_docs = context["restaurants"]
+        rag_debug = context.get("rag_debug") or {}
+
+        slots = build_daily_slots(profile, sights_docs, restaurants_docs)
+        itinerary = build_itinerary(profile, slots)
+        budget = estimate_budget(profile, itinerary)
+        transport = build_transport_guidance(profile, itinerary)
+
+        # LangChain returns estimated pricing based on OpenAI model pricing.
+        token_usage = {
+            "prompt_tokens": cb.prompt_tokens,
+            "completion_tokens": cb.completion_tokens,
+            "total_tokens": cb.total_tokens,
+            "total_cost": float(cb.total_cost) if cb.total_cost is not None else None,
+            # Keep raw callback attributes that are useful for debugging.
+            "model": getattr(cb, "model", None),
+        }
 
     return {
         "profile": profile,
@@ -35,6 +49,7 @@ def plan_itinerary_from_request(user_text: str) -> Dict[str, Any]:
         "slots": slots,
         "budget": budget,
         "transport": transport,
+        "token_usage": token_usage,
         "rag_debug": rag_debug,
         "context": {
             "sights_count": len(sights_docs),
