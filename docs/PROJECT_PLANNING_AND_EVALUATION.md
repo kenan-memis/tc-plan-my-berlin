@@ -72,24 +72,33 @@ Use this section to collect short, clear explanations you can use during your ST
 
 ### 2.1 How RAG works in PlanMyBerlin
 
-- High-level explanation of embeddings, vector search, and how we retrieve Berlin content before generating an answer.  
-- How query translation to `TripProfile` improves retrieval quality compared to naive keyword search.
+- **Embeddings + vector search:** We store Berlin knowledge as markdown files under `data/raw/`. During ingestion, documents are chunked and converted into embeddings (vector representations). At query time, the user’s request is embedded and we retrieve the most similar chunks from **Chroma** (`data/vectorstore/`). Those retrieved chunks become the “grounding context” for planning.
+- **Why this improves quality:** Instead of relying on the model’s general knowledge, the assistant uses our curated Berlin corpus (districts, sights, restaurants, transport overview). This makes responses more consistent and aligned with our chosen scope.
+- **Advanced RAG (query translation):** We translate the free-text user request into a structured `TripProfile` (days, budget, districts, pace, food style). That profile is used to shape retrieval queries (e.g. budget-friendly restaurants in chosen districts) and to drive the planning logic.
 
 ### 2.2 Tool calling in this project
 
-- What tools are implemented, what inputs/outputs they have, and when they are triggered.  
-- Why we use tools instead of “just prompts” for itinerary structure and budget calculations.
+- **Tools implemented (domain-relevant):**
+  - **Area/time organiser**: assigns day-by-day focus areas (districts) and selects candidate sights/restaurants for each day.
+  - **Itinerary builder**: creates a structured day plan (morning/lunch/afternoon/dinner) and respects “cheap lunch + nicer dinner”.
+  - **Budget estimator**: estimates daily and total costs using price-level heuristics.
+  - **Transport adviser (static):** generates “getting around” guidance from the transport overview (zones/tickets/hubs) and user constraints (e.g. “metro only”), without real-time routing.
+- **Why tools instead of prompts:** These steps are deterministic or rule-based and produce structured outputs (itinerary JSON, cost totals). Tools reduce hallucinations, make outputs predictable, and simplify UI rendering.
 
 ### 2.3 Prompt engineering for a Berlin travel assistant
 
-- How system prompts define the assistant’s role, tone, and safety constraints.  
-- How we structure prompts to combine retrieved context, trip profile, and tool results.
+- **Role and scope:** Prompts keep the assistant strictly Berlin-focused and “informational only” (no bookings, no live availability).
+- **Structured extraction:** We use a strict JSON schema to extract `TripProfile` from free-text. This is safer and easier to validate than free-form parsing.
+- **Grounding:** We keep planning grounded in retrieved Berlin snippets and our tool outputs (itinerary + budget).
 
 ### 2.4 User, system, and tool roles in LangChain
 
-- How messages and tool calls flow through the LangChain chain in this app.
+- **User → profile:** User provides one free-text request in Streamlit. The model converts it into a structured `TripProfile`.
+- **Profile → retrieval:** The profile shapes which Berlin snippets are retrieved from Chroma.
+- **Retrieval → tools:** Candidate sights/restaurants are fed into planning tools that generate the itinerary and budget.
+- **Tools → UI:** Streamlit renders the structured itinerary, budget totals, and a transport guidance section.
 
-*(You will fill these subsections with concrete explanations once the implementation is in place.)*
+This flow is easy to demonstrate in review: you can show the profile JSON, then the resulting itinerary and budget.
 
 ---
 
@@ -97,11 +106,52 @@ Use this section to collect short, clear explanations you can use during your ST
 
 Describe how PlanMyBerlin meets the Sprint 2 technical requirements.
 
-- **3.1 Architecture overview** – main modules (RAG, tools, UI) and how they interact.  
-- **3.2 RAG pipeline details** – data format, chunking strategy, embedding model, vector DB choice, retrieval settings.  
-- **3.3 Tool implementation** – specifics of itinerary, budget, and organiser tools.  
-- **3.4 Streamlit UI** – layout, components used, how results and context are shown.  
-- **3.5 Security and reliability** – validation, rate limiting, error handling, logging.
+### 3.1 Architecture overview
+
+- **Data**: `data/raw/*.md` (Berlin corpus) and `data/vectorstore/` (Chroma persisted embeddings).
+- **RAG**: `planmyberlin/rag/`:
+  - `ingest.py` builds the vector store.
+  - `trip_profile.py` parses user requests into structured profiles.
+  - `planning.py` retrieves candidate sights/restaurants guided by the profile.
+- **Tools**: `planmyberlin/tools/`:
+  - `area_organiser.py`, `itinerary_builder.py`, `budget_estimator.py`, `transport_adviser.py`
+  - `pipeline.py` orchestrates the end-to-end flow.
+- **UI**: `planmyberlin/ui/app.py` Streamlit app (input → generate → render results).
+
+### 3.2 RAG pipeline details
+
+- **Data format**: markdown with `## District` and `### Place/Restaurant` sections.
+- **Chunking**: `RecursiveCharacterTextSplitter` with ~800 char chunks and overlap.
+- **Embeddings**: OpenAI embeddings via `OpenAIEmbeddings()`.
+- **Vector DB**: Chroma persisted under `data/vectorstore/`.
+- **Retrieval**:
+  - Profile-shaped search queries.
+  - Top-k retrieval (e.g. 12 docs for sights and 12 for restaurants in the planning stage).
+
+### 3.3 Tool implementation (minimum three)
+
+- **Area/time organiser**: chooses districts per day based on `pace` and district preferences.
+- **Itinerary builder**: creates daily segments and applies meal cost preferences (cheap lunch / nicer dinner).
+- **Budget estimator**: applies price-level heuristics (`$`, `$$`, `$$$`) and provides totals + per-day breakdown.
+- **Transport adviser**: provides zones/tickets/hubs guidance and notes about user transport constraints (static only).
+
+### 3.4 Streamlit UI
+
+- One text input for the trip request.
+- “Generate plan” button with progress spinner.
+- Results sections:
+  - Trip profile (JSON)
+  - Itinerary (day-by-day)
+  - Budget estimate (total + per-day)
+  - Getting around (transport guidance)
+  - Source counts (how many snippets were used)
+
+### 3.5 Security and reliability
+
+- **Input validation**: max input length; blocks empty inputs; basic prompt-injection phrase checks.
+- **Rate limiting**: per-session request limit in Streamlit session state.
+- **Disclaimers**: informational-only; no real-time availability/booking/live routing; rough budget estimates.
+- **Error handling**: try/except around pipeline call; user-friendly error message; logs exception for debugging.
 
 ---
 
@@ -109,7 +159,23 @@ Describe how PlanMyBerlin meets the Sprint 2 technical requirements.
 
 Use this section later to prepare for questions like:
 
-- Why you chose this RAG design and these tools.  
-- What limitations PlanMyBerlin has (data freshness, coverage, assumptions).  
-- What you would improve next if you had more time (data, UI, evaluation, deployment, etc.).
+### 4.1 Why this design
+
+- **Berlin-only scope** keeps the knowledge base deep and reviewable within sprint time.
+- **Query translation (`TripProfile`)** makes planning more structured and reduces ambiguity.
+- **Tools** provide deterministic structure for itineraries and budgets, improving consistency and explainability.
+
+### 4.2 Limitations
+
+- **Static corpus**: data may be incomplete or outdated (opening hours, prices, closures).
+- **No real-time routing**: transport guidance is high-level; no step-by-step directions.
+- **Heuristic budget**: price-level mapping is approximate, not a real quote.
+- **Small dataset**: only a subset of Berlin districts and venues.
+
+### 4.3 Improvements if time allows
+
+- Add per-item **source citations** (show which snippet supported each suggestion).
+- Add conversation history and export (JSON/PDF).
+- Add token/cost display per request.
+- Add simple evaluation (golden questions + expected sources) or RAGAs later.
 
