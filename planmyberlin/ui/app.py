@@ -66,6 +66,18 @@ def main() -> None:
     with col2:
         if st.session_state.get("last_result"):
             st.caption("Last plan ready below")
+    with col3:
+        with st.expander("Previous plans (this session)", expanded=False):
+            history = st.session_state.get("history", [])
+            if not history:
+                st.caption("No previous plans yet.")
+            else:
+                labels = [f"{i+1}. {item['request'][:60]}..." for i, item in enumerate(history)]
+                idx = st.selectbox("Select a plan to view again", range(len(history)), format_func=lambda i: labels[i])
+                if st.button("Load selected plan"):
+                    st.session_state["last_result"] = history[idx]["result"]
+                    st.session_state["last_request"] = history[idx]["request"]
+                    st.success("Loaded plan from history. Scroll down to view.")
 
     if generate:
         text = (user_text or "").strip()
@@ -93,6 +105,9 @@ def main() -> None:
             try:
                 result = plan_itinerary_from_request(text)
                 st.session_state["last_result"] = result
+                history = st.session_state.get("history", [])
+                history.append({"request": text, "result": result})
+                st.session_state["history"] = history[-10:]  # keep last 10
             except Exception as e:
                 logger.exception("Failed to build plan")
                 st.error(f"Something went wrong: {e}")
@@ -153,6 +168,59 @@ def main() -> None:
         st.markdown("**Per day**")
         for row in per_day:
             st.markdown(f"- Day {row.get('day', 0)}: €{row.get('total_eur', 0):.1f} (food €{row.get('food_eur', 0):.1f}, activities €{row.get('activities_eur', 0):.1f})")
+
+    # Export current plan
+    import json as _json
+
+    st.subheader("Export this plan")
+    col_export_json, col_export_text = st.columns(2)
+    plan_str_json = _json.dumps(
+        {
+            "profile": profile,
+            "itinerary": itinerary,
+            "budget": budget,
+            "transport": transport,
+        },
+        indent=2,
+        ensure_ascii=False,
+    )
+    with col_export_json:
+        st.download_button(
+            "Download as JSON",
+            data=plan_str_json,
+            file_name="planmyberlin_plan.json",
+            mime="application/json",
+        )
+
+    # Simple text export
+    lines = ["PlanMyBerlin – Trip Plan", ""]
+    for day_data in days:
+        day_num = day_data.get("day", 0)
+        focus = ", ".join(day_data.get("focus_areas") or []) or "Berlin"
+        lines.append(f"Day {day_num} — {focus}")
+        for seg in day_data.get("segments") or []:
+            time_of_day = seg.get("time_of_day", "").capitalize()
+            name = seg.get("name", "")
+            neighbourhood = seg.get("neighbourhood", "")
+            price = seg.get("price_level", "")
+            label = f"{time_of_day}: {name}"
+            if neighbourhood:
+                label += f" ({neighbourhood})"
+            if price and seg.get("activity_type") == "restaurant":
+                label += f" — {price}"
+            lines.append(f"- {label}")
+        lines.append("")
+    if total:
+        lines.append(f"Total estimated cost (food + activities): €{total.get('total_eur', 0):.1f}")
+    text_export = "\n".join(lines)
+
+    with col_export_text:
+        st.download_button(
+            "Download as text",
+            data=text_export,
+            file_name="planmyberlin_plan.txt",
+            mime="text/plain",
+        )
 
     # Getting around
     st.subheader("Getting around (transport)")

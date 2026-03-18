@@ -100,3 +100,22 @@ kmemis-AE.2.5/                        # repo root (clone = this folder)
 
 This project is part of the Turing College AI Engineering course, Sprint 2 (“Building Applications with LangChain, RAGs, and Streamlit”). It is for learning and portfolio purposes.
 
+---
+
+## Optional tasks (progress)
+
+Checklist of Sprint 2 optional tasks. Marked with ✅ when implemented.  
+For maximum bonus points, the goal is at least **2 medium** and **1 hard** (or more, depending on time).
+
+### Easy
+
+- ✅ **1. Add conversation history and export functionality** – Per-session plan history in the UI plus per-plan JSON and text exports.
+
+### Medium
+
+- *(None implemented yet.)*
+
+### Hard
+
+- *(None implemented yet.)*
+
