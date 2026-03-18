@@ -51,8 +51,12 @@ This satisfies “interactive help / chatbot guide” at an easy, stable MVP lev
 
 ### Medium #1 — Implement multi-model support (OpenAI, Anthropic, etc.)
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** Added multi-model support for **TripProfile parsing** only. The Streamlit UI now offers a provider/model dropdown:
+  - OpenAI: `gpt-4o-mini`
+  - Gemini: `gemini-2.5-flash`
+
+The selected provider/model is used exclusively for parsing the user’s request into a structured `TripProfile` (embeddings + retrieval remain unchanged and still use OpenAI embeddings/Chroma). The cache key was updated to include the selected provider/model so switching models doesn’t reuse stale results.
 
 ### Medium #2 — Add real-time data updates to knowledge base
 

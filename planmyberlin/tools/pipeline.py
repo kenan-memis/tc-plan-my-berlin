@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json as _json
 import sys
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from langchain_community.callbacks import get_openai_callback
 
 from ..rag.planning import plan_from_request
@@ -14,7 +14,12 @@ from .budget_estimator import estimate_budget
 from .transport_adviser import build_transport_guidance
 
 
-def plan_itinerary_from_request(user_text: str) -> Dict[str, Any]:
+def plan_itinerary_from_request(
+    user_text: str,
+    *,
+    trip_profile_provider: str = "openai",
+    trip_profile_model: Optional[str] = None,
+) -> Dict[str, Any]:
     """
     End-to-end: parse request -> retrieve context -> build slots -> itinerary -> budget.
     Returns a single dict with profile, itinerary, budget, and raw context (sights/restaurants).
@@ -22,7 +27,11 @@ def plan_itinerary_from_request(user_text: str) -> Dict[str, Any]:
     token_usage: Dict[str, Any] = {}
 
     with get_openai_callback() as cb:
-        context = plan_from_request(user_text)
+        context = plan_from_request(
+            user_text,
+            trip_profile_provider=trip_profile_provider,
+            trip_profile_model=trip_profile_model,
+        )
         profile = context["profile"]
         sights_docs = context["sights"]
         restaurants_docs = context["restaurants"]

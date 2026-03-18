@@ -11,4 +11,5 @@ dependencies = [
   "langchain-community",
   "langchain-text-splitters",
   "chromadb",
+  "langchain-google-genai>=4.2.1",
 ]

@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import List, Literal, Optional, TypedDict, Any
+import os
 
 import json
 
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 BudgetLevel = Literal["low", "medium", "high"]
@@ -111,9 +113,28 @@ def _normalise_profile_dict(raw: TripProfileDict) -> TripProfile:
     )
 
 
-def parse_trip_request(user_text: str, *, model: Optional[str] = None) -> TripProfile:
+def parse_trip_request(
+    user_text: str,
+    *,
+    provider: str = "openai",
+    model: Optional[str] = None,
+) -> TripProfile:
     """Parse a natural-language trip request into a TripProfile using the LLM."""
-    llm = ChatOpenAI(model=model or "gpt-4o-mini")
+    provider = (provider or "openai").lower()
+    if provider == "openai":
+        llm = ChatOpenAI(model=model or "gpt-4o-mini")
+    elif provider == "gemini":
+        gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        if not gemini_key:
+            raise ValueError(
+                "Missing Gemini API key. Set `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) in your environment."
+            )
+        llm = ChatGoogleGenerativeAI(
+            model=model or "gemini-2.5-flash",
+            api_key=gemini_key,
+        )
+    else:
+        raise ValueError(f"Unsupported trip_profile provider: {provider}")
 
     system = (
         "You are a Berlin trip planning assistant. "

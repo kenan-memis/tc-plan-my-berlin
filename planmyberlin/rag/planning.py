@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
@@ -94,13 +94,22 @@ def build_plan_context(profile: TripProfile) -> Dict[str, Any]:
     }
 
 
-def plan_from_request(user_text: str) -> Dict[str, Any]:
+def plan_from_request(
+    user_text: str,
+    *,
+    trip_profile_provider: str = "openai",
+    trip_profile_model: Optional[str] = None,
+) -> Dict[str, Any]:
     """
     High-level entry point for later phases:
     - parse user request into a TripProfile
     - retrieve candidate sights and restaurants guided by that profile
     """
-    profile = parse_trip_request(user_text)
+    profile = parse_trip_request(
+        user_text,
+        provider=trip_profile_provider,
+        model=trip_profile_model,
+    )
     context = build_plan_context(profile)
     return context
 

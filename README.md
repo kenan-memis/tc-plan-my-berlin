@@ -116,7 +116,7 @@ For maximum bonus points, the goal is at least **2 medium** and **1 hard** (or m
 
 ### Medium
 
-- **1. Implement multi-model support (OpenAI, Anthropic, etc.)** – Not implemented yet.
+- ✅ **1. Implement multi-model support (OpenAI, Anthropic, etc.)** – Streamlit dropdown lets you choose `gpt-4o-mini` (OpenAI) or `gemini-2.5-flash` (Gemini) for TripProfile parsing only; embeddings/retrieval remain unchanged.
 - **2. Add real-time data updates to knowledge base** – Not implemented yet.
 - ✅ **3. Implement advanced caching strategies** – The UI caches pipeline results (`st.cache_data`) for up to 1 hour.
 - **4. Add user authentication and personalisation** – Not implemented yet.

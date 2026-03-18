@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import Final
@@ -20,7 +21,9 @@ from planmyberlin.tools.pipeline import plan_itinerary_from_request
 
 MAX_INPUT_CHARS: Final[int] = 800
 MAX_REQUESTS_PER_SESSION: Final[int] = 15
-PIPELINE_CACHE_VERSION: Final[str] = "v3"  # bump when pipeline output schema changes
+PIPELINE_CACHE_VERSION: Final[str] = "v4"  # bump when pipeline output schema changes
+OPENAI_TRIP_PROFILE_MODEL: Final[str] = "gpt-4o-mini"
+GEMINI_TRIP_PROFILE_MODEL: Final[str] = "gemini-2.5-flash"
 INJECTION_PHRASES: Final[tuple[str, ...]] = (
     "ignore previous instructions",
     "ignore all previous instructions",
@@ -36,12 +39,21 @@ logger = logging.getLogger("planmyberlin")
 
 
 @st.cache_data(show_spinner=False, ttl=3600)
-def get_plan_cached(user_text: str, cache_version: str) -> dict:
+def get_plan_cached(
+    user_text: str,
+    cache_version: str,
+    trip_profile_provider: str,
+    trip_profile_model: str,
+) -> dict:
     """
     Cache full pipeline results for identical requests.
     This reduces repeated LLM calls + retrieval costs during repeated UI interactions.
     """
-    return plan_itinerary_from_request(user_text)
+    return plan_itinerary_from_request(
+        user_text,
+        trip_profile_provider=trip_profile_provider,
+        trip_profile_model=trip_profile_model,
+    )
 
 
 def main() -> None:
@@ -59,6 +71,33 @@ def main() -> None:
         "Describe your trip in a few words (e.g. *2 days, budget-friendly, mix cheap lunch and nicer dinner, Kreuzberg and Mitte*). "
         "The assistant will suggest a day-by-day plan and rough budget."
     )
+
+    st.divider()
+    st.subheader("TripProfile model (how we parse your request)")
+    provider_choice = st.selectbox(
+        "Choose provider/model",
+        options=[
+            f"OpenAI ({OPENAI_TRIP_PROFILE_MODEL})",
+            f"Gemini ({GEMINI_TRIP_PROFILE_MODEL})",
+        ],
+        index=0,
+    )
+    trip_profile_provider = "openai" if provider_choice.startswith("OpenAI") else "gemini"
+    trip_profile_model = (
+        OPENAI_TRIP_PROFILE_MODEL if trip_profile_provider == "openai" else GEMINI_TRIP_PROFILE_MODEL
+    )
+
+    # Environment key checks (best-effort, no secrets shown)
+    if not os.getenv("OPENAI_API_KEY"):
+        st.error(
+            "Missing `OPENAI_API_KEY`. This app needs OpenAI for embeddings and (optionally) TripProfile parsing."
+        )
+        st.stop()
+    if trip_profile_provider == "gemini" and not (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")):
+        st.error(
+            "Missing Gemini API key. Select OpenAI, or set `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) in your environment."
+        )
+        st.stop()
 
     # Preferences / free-text input
     user_text = st.text_area(
@@ -183,7 +222,12 @@ def main() -> None:
         st.session_state["last_request"] = text
         with st.spinner("Building your plan (parsing request, retrieving places, building itinerary)…"):
             try:
-                result = get_plan_cached(text, PIPELINE_CACHE_VERSION)
+                result = get_plan_cached(
+                    text,
+                    PIPELINE_CACHE_VERSION,
+                    trip_profile_provider,
+                    trip_profile_model,
+                )
                 st.session_state["last_result"] = result
                 history = st.session_state.get("history", [])
                 history.append({"request": text, "result": result})
