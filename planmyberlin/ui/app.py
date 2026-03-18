@@ -171,9 +171,9 @@ def main() -> None:
 
     # Export current plan
     import json as _json
+    import base64 as _base64
 
     st.subheader("Export this plan")
-    col_export_json, col_export_text = st.columns(2)
     plan_str_json = _json.dumps(
         {
             "profile": profile,
@@ -184,13 +184,6 @@ def main() -> None:
         indent=2,
         ensure_ascii=False,
     )
-    with col_export_json:
-        st.download_button(
-            "Download as JSON",
-            data=plan_str_json,
-            file_name="planmyberlin_plan.json",
-            mime="application/json",
-        )
 
     # Simple text export
     lines = ["PlanMyBerlin – Trip Plan", ""]
@@ -214,13 +207,29 @@ def main() -> None:
         lines.append(f"Total estimated cost (food + activities): €{total.get('total_eur', 0):.1f}")
     text_export = "\n".join(lines)
 
-    with col_export_text:
-        st.download_button(
-            "Download as text",
-            data=text_export,
-            file_name="planmyberlin_plan.txt",
-            mime="text/plain",
-        )
+    # Use HTML download links so we can control spacing precisely.
+    plan_b64 = _base64.b64encode(plan_str_json.encode("utf-8")).decode("ascii")
+    text_b64 = _base64.b64encode(text_export.encode("utf-8")).decode("ascii")
+    href_json = f"data:application/json;base64,{plan_b64}"
+    href_text = f"data:text/plain;base64,{text_b64}"
+
+    st.markdown(
+        f"""
+        <div style="display:flex; gap:12px; align-items:center;">
+          <a download="planmyberlin_plan.json" href="{href_json}"
+             style="background-color:#e5534b; color:white; padding:0.55rem 1rem; border-radius:0.5rem;
+                    font-weight:600; text-decoration:none; border:1px solid #e5534b; display:inline-block;">
+            Download as JSON
+          </a>
+          <a download="planmyberlin_plan.txt" href="{href_text}"
+             style="background-color:transparent; color:#222; padding:0.55rem 1rem; border-radius:0.5rem;
+                    font-weight:600; text-decoration:none; border:1px solid #d0d0d0; display:inline-block;">
+            Download as text
+          </a>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # Getting around
     st.subheader("Getting around (transport)")
