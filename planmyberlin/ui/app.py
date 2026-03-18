@@ -188,12 +188,16 @@ def main() -> None:
             name = seg.get("name", "")
             neighbourhood = seg.get("neighbourhood", "")
             price = seg.get("price_level", "")
+            citation = (seg.get("citation") or "").strip()
             label = f"{time_of_day.capitalize()}: **{name}**"
             if neighbourhood:
                 label += f" ({neighbourhood})"
             if price and activity_type == "restaurant":
                 label += f" — {price}"
-            st.markdown(f"- {label}")
+            if citation:
+                # Render citation in muted style so it doesn't mix with the response text.
+                label += f" <span style='color:#6c757d; font-size:0.85em;'>[{citation}]</span>"
+            st.markdown(f"- {label}", unsafe_allow_html=True)
         st.divider()
 
     # Budget
@@ -239,11 +243,14 @@ def main() -> None:
             name = seg.get("name", "")
             neighbourhood = seg.get("neighbourhood", "")
             price = seg.get("price_level", "")
+            citation = (seg.get("citation") or "").strip()
             label = f"{time_of_day}: {name}"
             if neighbourhood:
                 label += f" ({neighbourhood})"
             if price and seg.get("activity_type") == "restaurant":
                 label += f" — {price}"
+            if citation:
+                label += f" [{citation}]"
             lines.append(f"- {label}")
         lines.append("")
     if total:

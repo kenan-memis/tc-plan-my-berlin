@@ -28,8 +28,11 @@ Implementation-wise, the retrieval queries and preview snippets are generated in
 
 ### Easy #3 — Include source citations in responses
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** Each itinerary segment (sights + restaurants) now includes an inline citation label derived from the original retrieved markdown source file (e.g. `places_berlin.md` → `places: <Place Name>`, `restaurants_berlin.md` → `restaurants: <Restaurant Name>`). The citation is displayed next to the segment in the Streamlit UI and included in the exported text summary. This is implemented by:
+  - adding `citation` fields during parsing in `planmyberlin/tools/parsing.py`,
+  - carrying them into itinerary segments in `planmyberlin/tools/itinerary_builder.py`,
+  - rendering them inline in `planmyberlin/ui/app.py`.
 
 ### Easy #4 — Add an interactive help feature or chatbot guide
 

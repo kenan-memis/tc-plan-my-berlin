@@ -67,6 +67,7 @@ def build_itinerary(
                 "activity_type": "sight",
                 "name": sights[0].get("name", "Sight"),
                 "neighbourhood": sights[0].get("neighbourhood", ""),
+                "citation": sights[0].get("citation"),
                 "notes": sights[0].get("content_snippet", "")[:200],
             })
             sights = sights[1:]
@@ -80,6 +81,7 @@ def build_itinerary(
                 "name": lunch.get("name", "Restaurant"),
                 "neighbourhood": lunch.get("neighbourhood", ""),
                 "price_level": lunch.get("price_level", "$$"),
+                "citation": lunch.get("citation"),
                 "notes": "Lunch",
             })
             restaurants = [r for r in restaurants if r.get("name") != lunch.get("name")]
@@ -94,6 +96,7 @@ def build_itinerary(
                 "activity_type": "sight",
                 "name": s.get("name", "Sight"),
                 "neighbourhood": s.get("neighbourhood", ""),
+                "citation": s.get("citation"),
                 "notes": (s.get("content_snippet") or "")[:200],
             })
 
@@ -106,6 +109,7 @@ def build_itinerary(
                 "name": dinner.get("name", "Restaurant"),
                 "neighbourhood": dinner.get("neighbourhood", ""),
                 "price_level": dinner.get("price_level", "$$"),
+                "citation": dinner.get("citation"),
                 "notes": "Dinner",
             })
 

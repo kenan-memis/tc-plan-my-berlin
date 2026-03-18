@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List
 
+from pathlib import Path
+
 
 def _extract_field(content: str, key: str) -> str | None:
     """Get value after '- Key: value' or 'Key: value'."""
@@ -28,11 +30,14 @@ def parse_sight_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
     content = doc.get("content") or ""
     name = _extract_heading(content) or "Unknown"
     neighbourhood = _extract_field(content, "Neighbourhood") or ""
-    type_ = _extract_field(content, "Type") or "sight"
+    source_path = (doc.get("metadata") or {}).get("source") or ""
+    source_file = Path(source_path).name if source_path else "places_berlin.md"
+    source_type = "places" if "places" in source_file else "sights"
     return {
         "name": name,
         "neighbourhood": neighbourhood,
         "type": "sight",
+        "citation": f"{source_type}: {name}",
         "content_snippet": content[:400],
     }
 
@@ -50,11 +55,16 @@ def parse_restaurant_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
         price_level = "$$"
     elif "$" in price_raw:
         price_level = "$"
+    source_path = (doc.get("metadata") or {}).get("source") or ""
+    source_file = Path(source_path).name if source_path else "restaurants_berlin.md"
+    source_type = "restaurants" if "restaurants" in source_file else "restaurants"
+
     return {
         "name": name,
         "neighbourhood": neighbourhood,
         "type": "restaurant",
         "price_level": price_level,
+        "citation": f"{source_type}: {name}",
         "content_snippet": content[:400],
     }
 
