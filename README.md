@@ -122,7 +122,7 @@ For maximum bonus points, the goal is at least **2 medium** and **1 hard** (or m
 - **4. Add user authentication and personalisation** – Not implemented yet.
 - ✅ **5. Calculate and display token usage and costs** – Shows token counts + estimated cost (and includes it in JSON export).
 - ✅ **6. Add visualisation of tool call results** – Dedicated expander visualizing intermediate tool outputs (slots, budget, transport).
-- **7. Implement conversation export in various formats (PDF, CSV, JSON)** – Not implemented yet.
+- ✅ **7. Implement conversation export in various formats (PDF, CSV, JSON)** – Added session-history (“conversation”) export as JSON + CSV (no PDF) in the UI.
 - **8. Connect to tools from a publicly available remote MCP server** – Not implemented yet.
 
 ### Hard

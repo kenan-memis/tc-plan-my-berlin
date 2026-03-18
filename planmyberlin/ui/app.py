@@ -405,9 +405,19 @@ def main() -> None:
         for row in per_day:
             st.markdown(f"- Day {row.get('day', 0)}: €{row.get('total_eur', 0):.1f} (food €{row.get('food_eur', 0):.1f}, activities €{row.get('activities_eur', 0):.1f})")
 
-    # Export current plan
-    import json as _json
+    # Getting around
+    st.subheader("Getting around (transport)")
+    transport_summary = (transport.get("summary") or "").strip()
+    if transport_summary:
+        st.markdown(transport_summary)
+    else:
+        st.caption("Transport guidance is not available yet.")
+
+    # Export current plan (Medium #7 UX order)
     import base64 as _base64
+    import csv as _csv
+    import io as _io
+    import json as _json
 
     st.subheader("Export this plan")
     plan_str_json = _json.dumps(
@@ -471,13 +481,81 @@ def main() -> None:
         unsafe_allow_html=True,
     )
 
-    # Getting around
-    st.subheader("Getting around (transport)")
-    transport_summary = (transport.get("summary") or "").strip()
-    if transport_summary:
-        st.markdown(transport_summary)
+    # Export conversation / session history (Medium #7)
+    st.subheader("Export the conversation")
+    history = st.session_state.get("history", []) or []
+    if not history:
+        st.info("No previous plans found yet. Generate at least one plan to export conversation history.")
     else:
-        st.caption("Transport guidance is not available yet.")
+        history_json_str = _json.dumps(history, indent=2, ensure_ascii=False)
+        history_json_b64 = _base64.b64encode(history_json_str.encode("utf-8")).decode("ascii")
+        href_hist_json = f"data:application/json;base64,{history_json_b64}"
+
+        # Flatten history into a compact CSV for easier review.
+        fieldnames = [
+            "index",
+            "request",
+            "budget_level",
+            "num_days",
+            "total_cost_eur",
+            "within_budget",
+            "district_preferences",
+        ]
+        buf = _io.StringIO()
+        writer = _csv.DictWriter(buf, fieldnames=fieldnames)
+        writer.writeheader()
+        for i, item in enumerate(history):
+            req = (item.get("request") or "").replace("\n", " ").strip()
+            result = item.get("result") or {}
+            profile_row = result.get("profile") or {}
+            itinerary_row = result.get("itinerary") or {}
+            budget_row = result.get("budget") or {}
+            total_row = budget_row.get("total") or {}
+            within_budget = budget_row.get("within_budget", "")
+            district_preferences = profile_row.get("district_preferences") or []
+            if isinstance(district_preferences, list):
+                district_preferences = ", ".join(str(x) for x in district_preferences)
+            else:
+                district_preferences = str(district_preferences)
+
+            num_days = itinerary_row.get("num_days")
+            if num_days is None:
+                days_list = itinerary_row.get("days") or []
+                num_days = len(days_list)
+
+            writer.writerow(
+                {
+                    "index": i,
+                    "request": req,
+                    "budget_level": profile_row.get("budget_level", ""),
+                    "num_days": num_days or "",
+                    "total_cost_eur": total_row.get("total_eur", ""),
+                    "within_budget": within_budget,
+                    "district_preferences": district_preferences,
+                }
+            )
+
+        history_csv_str = buf.getvalue()
+        history_csv_b64 = _base64.b64encode(history_csv_str.encode("utf-8")).decode("ascii")
+        href_hist_csv = f"data:text/csv;base64,{history_csv_b64}"
+
+        st.markdown(
+            f"""
+            <div style="display:flex; gap:12px; align-items:center;">
+              <a download="planmyberlin_conversation_history.json" href="{href_hist_json}"
+                 style="background-color:#e5534b; color:white; padding:0.55rem 1rem; border-radius:0.5rem;
+                        font-weight:600; text-decoration:none; border:1px solid #e5534b; display:inline-block;">
+                Download conversation JSON
+              </a>
+              <a download="planmyberlin_conversation_history.csv" href="{href_hist_csv}"
+                 style="background-color:transparent; color:#222; padding:0.55rem 1rem; border-radius:0.5rem;
+                        font-weight:600; text-decoration:none; border:1px solid #d0d0d0; display:inline-block;">
+                Download conversation CSV
+              </a>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     # Sources
     st.caption(

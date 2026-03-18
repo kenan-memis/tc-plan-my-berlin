@@ -85,8 +85,12 @@ The selected provider/model is used exclusively for parsing the user’s request
 
 ### Medium #7 — Implement conversation export in various formats (PDF, CSV, JSON)
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** Added **session-history (“conversation”) export** in the Streamlit UI. The existing “Export this plan” section remains, and right below it we added:
+  - conversation download as **JSON** (exports `st.session_state["history"]`)
+  - conversation download as **CSV** (flattened rows for quick review)
+
+We intentionally did **not** add PDF to keep dependencies/time within Sprint 2 scope.
 
 ### Medium #8 — Connect to tools from a publicly available remote MCP server
 
