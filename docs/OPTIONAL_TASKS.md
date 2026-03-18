@@ -61,8 +61,8 @@ This satisfies “interactive help / chatbot guide” at an easy, stable MVP lev
 
 ### Medium #3 — Implement advanced caching strategies
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** Added a Streamlit cache (`st.cache_data`) around the end-to-end pipeline call. Identical user requests reuse the previously computed result (TripProfile parsing, RAG retrieval, itinerary building, budget estimation, and transport guidance) for up to 1 hour (`ttl=3600`). This reduces repeated OpenAI API calls and makes the UI feel faster while keeping the underlying RAG/docs logic unchanged.
 
 ### Medium #4 — Add user authentication and personalisation
 

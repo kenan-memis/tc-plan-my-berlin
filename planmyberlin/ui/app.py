@@ -34,6 +34,15 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("planmyberlin")
 
 
+@st.cache_data(show_spinner=False, ttl=3600)
+def get_plan_cached(user_text: str) -> dict:
+    """
+    Cache full pipeline results for identical requests.
+    This reduces repeated LLM calls + retrieval costs during repeated UI interactions.
+    """
+    return plan_itinerary_from_request(user_text)
+
+
 def main() -> None:
     st.set_page_config(page_title="PlanMyBerlin", page_icon="🗺️", layout="wide")
 
@@ -173,7 +182,7 @@ def main() -> None:
         st.session_state["last_request"] = text
         with st.spinner("Building your plan (parsing request, retrieving places, building itinerary)…"):
             try:
-                result = plan_itinerary_from_request(text)
+                result = get_plan_cached(text)
                 st.session_state["last_result"] = result
                 history = st.session_state.get("history", [])
                 history.append({"request": text, "result": result})
