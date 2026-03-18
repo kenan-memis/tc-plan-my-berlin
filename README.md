@@ -64,9 +64,9 @@ OPENAI_API_KEY=sk-your-key-here
 
 Make sure `.env` is **never committed** (it should be in `.gitignore`).
 
-### 4. Run the app (minimal homepage)
+### 4. Run the app
 
-To confirm the setup works and see the minimal homepage, run:
+Start the Streamlit app (trip request form → generate plan → view itinerary and budget):
 
 ```bash
 uv run streamlit run planmyberlin/ui/app.py

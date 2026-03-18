@@ -10,6 +10,7 @@ from ..rag.planning import plan_from_request
 from .area_organiser import build_daily_slots
 from .itinerary_builder import build_itinerary
 from .budget_estimator import estimate_budget
+from .transport_adviser import build_transport_guidance
 
 
 def plan_itinerary_from_request(user_text: str) -> Dict[str, Any]:
@@ -25,11 +26,13 @@ def plan_itinerary_from_request(user_text: str) -> Dict[str, Any]:
     slots = build_daily_slots(profile, sights_docs, restaurants_docs)
     itinerary = build_itinerary(profile, slots)
     budget = estimate_budget(profile, itinerary)
+    transport = build_transport_guidance(profile, itinerary)
 
     return {
         "profile": profile,
         "itinerary": itinerary,
         "budget": budget,
+        "transport": transport,
         "context": {
             "sights_count": len(sights_docs),
             "restaurants_count": len(restaurants_docs),
