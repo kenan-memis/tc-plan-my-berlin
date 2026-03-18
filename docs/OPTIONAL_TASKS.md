@@ -15,8 +15,16 @@ This document records which optional Sprint 2 tasks we implement for **PlanMyBer
 
 ### Easy #2 — Add visualisation of RAG process
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** After generating a plan, the UI now shows a collapsed expander **“RAG retrieval debug (how we chose candidates)”**. It displays:
+  - the exact **sights retrieval query** used for Chroma search,
+  - a short list of **top retrieved sights snippet previews**,
+  - the exact **restaurants retrieval query** used for Chroma search,
+  - a short list of **top retrieved restaurant snippet previews**.
+
+  Additionally, it now shows a **similarity score per retrieved snippet** (Chroma distance as returned by `similarity_search_with_score`). This is an informational “how the retrieval worked” view, not a hard guarantee of correctness.
+
+Implementation-wise, the retrieval queries and preview snippets are generated in `planmyberlin/rag/planning.py` and passed through `planmyberlin/tools/pipeline.py` into the final result dict, then rendered in `planmyberlin/ui/app.py`.
 
 ### Easy #3 — Include source citations in responses
 

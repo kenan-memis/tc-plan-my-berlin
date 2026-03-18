@@ -125,11 +125,54 @@ def main() -> None:
     itinerary = result.get("itinerary") or {}
     budget = result.get("budget") or {}
     transport = result.get("transport") or {}
+    rag_debug = result.get("rag_debug") or {}
     context = result.get("context") or {}
 
     # Profile summary
     with st.expander("Trip profile (how we understood your request)", expanded=False):
         st.json(profile)
+
+    # RAG debug (Easy #2)
+    with st.expander("RAG retrieval debug (how we chose candidates)", expanded=False):
+        if not rag_debug:
+            st.warning(
+                "RAG debug info is missing from this generated plan. "
+                "If you recently updated the backend, please restart Streamlit (stop + re-run) "
+                "to ensure the latest code is loaded."
+            )
+            st.stop()
+
+        st.markdown("**Sights retrieval query**")
+        if rag_debug.get("sights_query"):
+            st.code(rag_debug["sights_query"])
+
+        if rag_debug.get("top_sights_previews"):
+            scores = rag_debug.get("top_sights_scores") or []
+            st.markdown("**Top retrieved sights snippets**")
+            for i, preview in enumerate(rag_debug["top_sights_previews"][:5]):
+                score = scores[i] if i < len(scores) else None
+                st.markdown(f"{i+1}.")
+                if preview:
+                    if score is not None:
+                        st.caption(f"Similarity score (Chroma distance): {score:.4f}")
+                    st.code(preview)
+
+        st.divider()
+
+        st.markdown("**Restaurants retrieval query**")
+        if rag_debug.get("restaurants_query"):
+            st.code(rag_debug["restaurants_query"])
+
+        if rag_debug.get("top_restaurants_previews"):
+            scores = rag_debug.get("top_restaurants_scores") or []
+            st.markdown("**Top retrieved restaurant snippets**")
+            for i, preview in enumerate(rag_debug["top_restaurants_previews"][:5]):
+                score = scores[i] if i < len(scores) else None
+                st.markdown(f"{i+1}.")
+                if preview:
+                    if score is not None:
+                        st.caption(f"Similarity score (Chroma distance): {score:.4f}")
+                    st.code(preview)
 
     # Itinerary by day
     st.subheader("Your itinerary")

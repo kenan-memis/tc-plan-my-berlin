@@ -22,6 +22,7 @@ def plan_itinerary_from_request(user_text: str) -> Dict[str, Any]:
     profile = context["profile"]
     sights_docs = context["sights"]
     restaurants_docs = context["restaurants"]
+    rag_debug = context.get("rag_debug") or {}
 
     slots = build_daily_slots(profile, sights_docs, restaurants_docs)
     itinerary = build_itinerary(profile, slots)
@@ -33,6 +34,7 @@ def plan_itinerary_from_request(user_text: str) -> Dict[str, Any]:
         "itinerary": itinerary,
         "budget": budget,
         "transport": transport,
+        "rag_debug": rag_debug,
         "context": {
             "sights_count": len(sights_docs),
             "restaurants_count": len(restaurants_docs),

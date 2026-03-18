@@ -110,6 +110,7 @@ For maximum bonus points, the goal is at least **2 medium** and **1 hard** (or m
 ### Easy
 
 - ✅ **1. Add conversation history and export functionality** – Per-session plan history in the UI plus per-plan JSON and text exports.
+- ✅ **2. Add visualisation of RAG process** – “RAG retrieval debug” expander shows sights/restaurants retrieval queries, top retrieved snippet previews, and per-snippet similarity scores (Chroma distance).
 
 ### Medium
 
