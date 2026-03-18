@@ -105,8 +105,8 @@ We intentionally did **not** add PDF to keep dependencies/time within Sprint 2 s
 
 ### Hard #1 — Deploy to cloud with proper scaling
 
-- **Status:** Not implemented  
-- **Summary (planned):** TBD  
+- **Status:** ✅ Implemented  
+- **Summary:** Added Cloud Run deployment assets (Dockerfile + entrypoint) and a `docs/DEPLOYMENT.md` guide. The container runs Chroma ingestion on every container start (Option A1) to guarantee the production knowledge base matches the latest `data/raw/*.md` baked into the image. Recommended Cloud Run scaling settings are included (`min=1`, `max=1`, `concurrency=1`) to avoid demo-time cold-start issues.
 
 ### Hard #2 — Implement advanced indexing (e.g., RAPTOR, ColBERT)
 

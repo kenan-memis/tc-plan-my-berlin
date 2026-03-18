@@ -127,7 +127,7 @@ For maximum bonus points, the goal is at least **2 medium** and **1 hard** (or m
 
 ### Hard
 
-- **1. Deploy to cloud with proper scaling** – Not implemented yet.
+- ✅ **1. Deploy to cloud with proper scaling** – Docker/entrypoint + `docs/DEPLOYMENT.md` added for Cloud Run. Recommended scaling settings: `min=1`, `max=1`, `concurrency=1` and ingest runs on container start (Option A1).
 - **2. Implement advanced indexing (e.g., RAPTOR, ColBERT)** – Not implemented yet.
 - **3. Implement A/B testing for different RAG strategies** – Not implemented yet.
 - **4. Add automated knowledge base updates** – Not implemented yet.

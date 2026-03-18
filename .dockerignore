@@ -1,0 +1,8 @@
+.venv
+data/vectorstore
+__pycache__/
+*.pyc
+.git/
+.cursor/
+agent-transcripts/
+
