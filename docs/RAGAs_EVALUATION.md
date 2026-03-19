@@ -9,22 +9,33 @@ This document summarizes the results of **Hard #9**: evaluating the RAG pipeline
 - **Samples:** `8` Berlin trip queries
 - **Retrieved contexts (`top_k_contexts`):** `24`
 
-## Metric averages (from `hard9-final_summary.md`)
+## Metric averages (before vs after data update)
+Before (`hard9-final_summary.md`):
 - **faithfulness:** `0.6719`
 - **answer_relevancy:** `0.8529`
 - **context_precision:** `0.5298`
 - **context_recall:** `0.9464`
 
-## How to interpret these results
-- **Faithfulness (0.6719):** about 2/3 of the answer’s atomic claims are supported by the retrieved contexts. This indicates some remaining risk of unsupported details (hallucination-like behavior), but the system is not completely ungrounded.
-- **Answer relevancy (0.8529):** answers are usually aligned with the user’s question and generally on-topic.
-- **Context recall (0.9464):** the retriever often includes the needed information somewhere in the retrieved set (high coverage).
-- **Context precision (0.5298):** the retrieved set contains a substantial amount of irrelevant/noisy chunks. This can indirectly reduce faithfulness (extra noise -> more opportunities for unsupported claims).
+After (`hard9-after-data-update_summary.md`):
+- **faithfulness:** `0.7383`
+- **answer_relevancy:** `0.8622`
+- **context_precision:** `0.3312`
+- **context_recall:** `0.9375`
+
+### Before vs After (delta highlights)
+- **faithfulness:** `+0.0664` (better grounding)
+- **answer_relevancy:** `+0.0093` (slightly better alignment)
+- **context_precision:** `-0.1986` (retrieval became noisier)
+- **context_recall:** `-0.0089` (still high coverage)
+
+### Interpretation (what changed)
+After adding more knowledge base data, the system’s **faithfulness improved** (more answer claims were supported by retrieved contexts) and **answer relevancy stayed strong**. However, **context precision dropped significantly**, meaning the retriever returned more irrelevant/noisy chunks; this is a risk factor because extra noise can lead to unsupported details. Even with that precision drop, **context recall remained very high**, so the needed information is still usually present somewhere in the retrieved set, which helps the model stay grounded.
 
 ## Artifacts / where the raw results live
 Run output is saved under:
 - `planmyberlin/eval/results/hard9-final.json`
 - `planmyberlin/eval/results/hard9-final_summary.md`
+- `planmyberlin/eval/results/hard9-after-data-update_summary.md`
 
 ## How to reproduce
 From the repo root (`plan-my-berlin/`):
