@@ -7,7 +7,7 @@ This document summarizes the results of **Hard #9**: evaluating the RAG pipeline
 - **Judge model:** `gpt-4o-mini`
 - **TripProfile parsing:** `gpt-4o-mini` via OpenAI
 - **Samples:** `8` Berlin trip queries
-- **Retrieved contexts (`top_k_contexts`):** `24`
+- **Retrieved contexts (`top_k_contexts`):** `24` for both runs (`hard9-final` and `hard9-after-data-update`)
 
 ## Metric averages (before vs after data update)
 Before (`hard9-final_summary.md`):
@@ -17,19 +17,21 @@ Before (`hard9-final_summary.md`):
 - **context_recall:** `0.9464`
 
 After (`hard9-after-data-update_summary.md`):
-- **faithfulness:** `0.7383`
-- **answer_relevancy:** `0.8622`
-- **context_precision:** `0.3312`
+- **faithfulness:** `0.7540`
+- **answer_relevancy:** `0.8625`
+- **context_precision:** `0.4476`
 - **context_recall:** `0.9375`
 
 ### Before vs After (delta highlights)
-- **faithfulness:** `+0.0664` (better grounding)
-- **answer_relevancy:** `+0.0093` (slightly better alignment)
-- **context_precision:** `-0.1986` (retrieval became noisier)
+- **faithfulness:** `+0.0821` (better grounding)
+- **answer_relevancy:** `+0.0096` (slightly better alignment)
+- **context_precision:** `-0.0822` (more noise in retrieved set)
 - **context_recall:** `-0.0089` (still high coverage)
 
 ### Interpretation (what changed)
-After adding more knowledge base data, the system’s **faithfulness improved** (more answer claims were supported by retrieved contexts) and **answer relevancy stayed strong**. However, **context precision dropped significantly**, meaning the retriever returned more irrelevant/noisy chunks; this is a risk factor because extra noise can lead to unsupported details. Even with that precision drop, **context recall remained very high**, so the needed information is still usually present somewhere in the retrieved set, which helps the model stay grounded.
+We keep the same KB expansion (“data update”) as before, and apply an evaluation-only **entity-level context filtering** step that removes header-only chunks (keeping only chunks that contain concrete `### <Place/Restaurant>` entries) before sending contexts into RAGAs.
+
+With the larger KB, the system becomes **more grounded** overall (higher faithfulness) and stays **highly on-topic** (answer relevancy stays strong). The remaining decrease in **context precision** suggests that even among entity-level chunks, the retriever still returns some extra/noisy candidates—however **context recall stays very high**, so the needed information is still usually present somewhere in the retrieved set.
 
 ## Artifacts / where the raw results live
 Run output is saved under:
@@ -48,6 +50,18 @@ uv run python -m planmyberlin.eval.run_ragas_eval \
   --trip-profile-provider openai \
   --trip-profile-model gpt-4o-mini \
   --output-name hard9-final
+```
+
+After (precision-tuned evaluation run):
+
+```bash
+uv run python -m planmyberlin.eval.run_ragas_eval \
+  --max-samples 8 \
+  --top-k-contexts 24 \
+  --judge-model gpt-4o-mini \
+  --trip-profile-provider openai \
+  --trip-profile-model gpt-4o-mini \
+  --output-name hard9-after-data-update
 ```
 
 ## What to expect after you add more data

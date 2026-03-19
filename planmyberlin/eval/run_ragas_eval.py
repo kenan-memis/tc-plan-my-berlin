@@ -20,6 +20,7 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+import re
 
 from datasets import Dataset
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -103,9 +104,24 @@ def _build_sample(
 
     # Contexts for RAGAs: top-k retrieved sights/restaurants chunks (full text)
     combined_docs = (sights_docs or []) + (restaurants_docs or [])
-    contexts = [d.get("content") for d in combined_docs[:top_k_contexts] if d.get("content")]
-    if not contexts:
-        contexts = ["(no retrieved context available)"]
+
+    # Precision-focused filtering:
+    # Keep only chunks that contain a concrete entity entry ("### <Place/Restaurant>").
+    # Our corpus includes additional header chunks ("# Berlin...", "## Mitte", etc.)
+    # that can be close-by in embedding space but less directly useful for grounding.
+    entity_heading_re = re.compile(r"^###\s+.+$", flags=re.MULTILINE)
+
+    filtered_contexts: List[str] = []
+    for d in combined_docs:
+        content = d.get("content") or ""
+        if not content.strip():
+            continue
+        if entity_heading_re.search(content):
+            filtered_contexts.append(content)
+        if len(filtered_contexts) >= top_k_contexts:
+            break
+
+    contexts = filtered_contexts or ["(no retrieved context available)"]
 
     return query, answer_text, contexts
 
