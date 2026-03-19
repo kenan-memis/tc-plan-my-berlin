@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List
+import unicodedata
 
 from .parsing import parse_restaurants, parse_sights
 
@@ -15,7 +16,16 @@ DEFAULT_DISTRICTS = [
     "Friedrichshain",
     "Neukölln",
     "Charlottenburg",
+    "Tiergarten",
+    "Schöneberg",
+    "Wedding",
 ]
+
+def _canon_district(s: str) -> str:
+    """Lowercase + strip umlauts so 'Schoneberg' == 'Schöneberg'."""
+    norm = unicodedata.normalize("NFKD", s or "")
+    norm = "".join(ch for ch in norm if not unicodedata.combining(ch))
+    return norm.strip().lower()
 
 
 def build_daily_slots(
@@ -33,6 +43,33 @@ def build_daily_slots(
     num_days = max(1, min(10, int(profile.get("num_days") or 1)))
     district_prefs = profile.get("district_preferences") or []
     pace = profile.get("pace") or "balanced"
+
+    # If the user did NOT specify any districts, don't constrain by our fallback district ordering.
+    # Otherwise we'd ignore good matches (e.g., Tiergarten Park) even when retrieval found them.
+    if not district_prefs:
+        num_days = max(1, min(10, int(profile.get("num_days") or 1)))
+        per_day_take = 8
+        slots: List[Dict[str, Any]] = []
+        for day_num in range(1, num_days + 1):
+            start_idx = (day_num - 1) * per_day_take
+
+            day_sights = sights[start_idx : start_idx + per_day_take]
+            if not day_sights:
+                day_sights = sights[:per_day_take]
+
+            day_restaurants = restaurants[start_idx : start_idx + per_day_take]
+            if not day_restaurants:
+                day_restaurants = restaurants[:per_day_take]
+
+            slots.append(
+                {
+                    "day": day_num,
+                    "districts": ["Berlin"],
+                    "sights": day_sights[:8],
+                    "restaurants": day_restaurants[:8],
+                }
+            )
+        return slots
 
     # Which districts to use (preferred first, then fill from defaults)
     districts_order = [d for d in district_prefs if d in DEFAULT_DISTRICTS]
@@ -56,10 +93,10 @@ def build_daily_slots(
         day_restaurants: List[Dict[str, Any]] = []
         for dist in districts:
             for s in sights:
-                if (s.get("neighbourhood") or "").lower() == dist.lower():
+                if _canon_district(s.get("neighbourhood") or "") == _canon_district(dist):
                     day_sights.append(s)
             for r in restaurants:
-                if (r.get("neighbourhood") or "").lower() == dist.lower():
+                if _canon_district(r.get("neighbourhood") or "") == _canon_district(dist):
                     day_restaurants.append(r)
         # If no district match, add all we have (fallback)
         if not day_sights and not day_restaurants:

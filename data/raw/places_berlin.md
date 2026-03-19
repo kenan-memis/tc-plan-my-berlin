@@ -23,6 +23,13 @@
 - Typical visit time: 1–2 hours
 - Summary: A busy central square known for its shops, restaurants, and transport connections. It’s home to the TV Tower (Fernsehturm), offering panoramic views over Berlin.
 
+### Berlin Cathedral (Berliner Dom)
+- Type: Church / landmark
+- Neighbourhood: Mitte
+- Tags: history, architecture, indoor
+- Typical visit time: 1–2 hours
+- Summary: A grand cathedral with impressive architecture and a dome you can climb for city views.
+
 ---
 
 ## Kreuzberg
@@ -47,6 +54,13 @@
 - Tags: walking, scenic, outdoor
 - Typical visit time: 1–2 hours
 - Summary: A scenic canal perfect for walking or relaxing by the water. The area around Admiralbrücke is especially lively in the evenings.
+
+### Viktoriapark
+- Type: Park
+- Neighbourhood: Kreuzberg
+- Tags: nature, viewpoint, outdoor
+- Typical visit time: 1–2 hours
+- Summary: A hilltop park with a waterfall and great views over the city. Less crowded than other parks.
 
 ---
 
@@ -98,6 +112,13 @@
 - Typical visit time: 2–4 hours
 - Summary: An alternative cultural space with clubs, bars, street art, and event venues. Known for its edgy atmosphere and nightlife scene.
 
+### Oberbaum Bridge
+- Type: Bridge / landmark
+- Neighbourhood: Friedrichshain
+- Tags: architecture, history, scenic
+- Typical visit time: 30–60 minutes
+- Summary: One of Berlin’s most iconic bridges connecting Friedrichshain and Kreuzberg, especially beautiful at sunset.
+
 ---
 
 ## Neukölln
@@ -123,6 +144,13 @@
 - Typical visit time: 1–2 hours
 - Summary: A small but beautifully designed park with a more formal layout, fountains, and a peaceful atmosphere compared to other parks in Berlin.
 
+### Klunkerkranich
+- Type: Rooftop bar / viewpoint
+- Neighbourhood: Neukölln
+- Tags: nightlife, view, alternative
+- Typical visit time: 2–3 hours
+- Summary: A rooftop bar on top of a shopping center offering great sunset views and a relaxed atmosphere.
+
 ---
 
 ## Charlottenburg
@@ -147,3 +175,57 @@
 - Tags: cafés, relaxed, local
 - Typical visit time: 1–2 hours
 - Summary: A charming square surrounded by restaurants, bookstores, and cafés. Popular with locals for a quieter and more refined atmosphere.
+
+---
+
+## Tiergarten
+
+### Tiergarten Park
+- Type: Park
+- Neighbourhood: Tiergarten
+- Tags: nature, central, outdoor
+- Typical visit time: 2–3 hours
+- Summary: Berlin’s largest central park, ideal for walking, cycling, or relaxing. Located between major landmarks, it offers a green escape in the middle of the city.
+
+### Victory Column (Siegessäule)
+- Type: Monument
+- Neighbourhood: Tiergarten
+- Tags: history, viewpoint, outdoor
+- Typical visit time: 45–60 minutes
+- Summary: A historic monument with a viewing platform offering panoramic views over Berlin. Located in the center of Tiergarten.
+
+---
+
+## Schöneberg
+
+### Rathaus Schöneberg
+- Type: Historic building
+- Neighbourhood: Schöneberg
+- Tags: history, political, landmark
+- Typical visit time: 30–60 minutes
+- Summary: Famous for John F. Kennedy’s “Ich bin ein Berliner” speech. A symbolic place in Cold War history.
+
+### Akazienkiez
+- Type: Neighbourhood area
+- Neighbourhood: Schöneberg
+- Tags: local, cafés, relaxed
+- Typical visit time: 1–2 hours
+- Summary: A charming neighborhood with independent shops, cafés, and a relaxed local atmosphere.
+
+---
+
+## Wedding
+
+### Plötzensee Lake
+- Type: Lake / swimming area
+- Neighbourhood: Wedding
+- Tags: nature, swimming, outdoor
+- Typical visit time: 2–3 hours
+- Summary: A popular lake for swimming in summer. Offers a more local and less touristy experience.
+
+### Silent Green Kulturquartier
+- Type: Cultural space
+- Neighbourhood: Wedding
+- Tags: culture, events, alternative
+- Typical visit time: 1–2 hours
+- Summary: A former crematorium turned into a cultural venue hosting exhibitions, concerts, and events.

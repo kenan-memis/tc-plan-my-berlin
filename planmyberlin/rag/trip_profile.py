@@ -80,10 +80,16 @@ def _normalise_profile_dict(raw: TripProfileDict) -> TripProfile:
             normalised_districts.append("Prenzlauer Berg")
         elif "friedrichshain" in name:
             normalised_districts.append("Friedrichshain")
+        elif "tiergarten" in name:
+            normalised_districts.append("Tiergarten")
         elif "neukölln" in name or "neukolln" in name:
             normalised_districts.append("Neukölln")
         elif "charlottenburg" in name:
             normalised_districts.append("Charlottenburg")
+        elif "schöneberg" in name or "schoeneberg" in name or "schoneberg" in name:
+            normalised_districts.append("Schöneberg")
+        elif "wedding" in name:
+            normalised_districts.append("Wedding")
         else:
             normalised_districts.append(d)
 

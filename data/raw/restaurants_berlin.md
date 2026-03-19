@@ -34,6 +34,14 @@
 - Tags: quick, casual, local
 - Summary: A popular currywurst spot near Hackescher Markt. Fast, affordable, and a classic Berlin street food experience.
 
+### Daluma
+- Type: Café
+- Neighbourhood: Mitte
+- Cuisine: Healthy / vegetarian
+- Price level: $$
+- Tags: healthy, modern, quick
+- Summary: A popular spot for healthy bowls, smoothies, and light meals. Modern and minimalistic vibe.
+
 ---
 
 ## Kreuzberg
@@ -61,6 +69,14 @@
 - Price level: $$
 - Tags: relaxed, scenic, brunch
 - Summary: A peaceful café by the water, perfect for breakfast or a relaxed coffee break.
+
+### Ankerklause
+- Type: Café / bar
+- Neighbourhood: Kreuzberg
+- Cuisine: German / café
+- Price level: $$
+- Tags: scenic, relaxed, local
+- Summary: Located by the canal, this spot is great for coffee during the day and drinks in the evening.
 
 ---
 
@@ -98,6 +114,14 @@
 - Tags: quick, local, casual
 - Summary: A well-known currywurst stand offering high-quality sausages and sauces. Great for a quick and authentic Berlin snack.
 
+### No Fire No Glory
+- Type: Café
+- Neighbourhood: Prenzlauer Berg
+- Cuisine: Coffee / brunch
+- Price level: $
+- Tags: coffee, local, relaxed
+- Summary: A small café known for excellent coffee and a quiet, local atmosphere.
+
 ---
 
 ## Friedrichshain
@@ -134,6 +158,14 @@
 - Tags: quick, casual, popular
 - Summary: A solid alternative to more famous döner spots, offering fresh ingredients and generous portions at a low price.
 
+### Spätzle & Knödel
+- Type: Sit-down
+- Neighbourhood: Friedrichshain
+- Cuisine: German
+- Price level: $$
+- Tags: traditional, cosy, vegetarian options
+- Summary: A cosy restaurant specializing in southern German comfort food, with many vegetarian dishes.
+
 ---
 
 ## Neukölln
@@ -161,6 +193,14 @@
 - Price level: $$$
 - Tags: romantic, unique, dinner
 - Summary: A unique restaurant with a fixed menu and cozy atmosphere. Known for its intimate dining experience and high-quality Italian cuisine.
+
+### Roamers
+- Type: Café / brunch
+- Neighbourhood: Neukölln
+- Cuisine: International
+- Price level: $$
+- Tags: brunch, trendy, busy
+- Summary: A very popular brunch spot known for creative dishes and high-quality ingredients.
 
 ---
 
@@ -197,3 +237,37 @@
 - Price level: $
 - Tags: quick, popular, casual
 - Summary: A branch of the famous döner chain near the Zoo area. Expect fresh ingredients and a busy but fast-moving line.
+
+## Charlottenburg
+
+### What Do You Fancy Love?
+- Type: Café / brunch
+- Neighbourhood: Charlottenburg
+- Cuisine: Australian / brunch
+- Price level: $$
+- Tags: brunch, trendy, modern
+- Summary: A modern brunch café with creative dishes and a relaxed but stylish atmosphere.
+
+---
+
+## Tiergarten
+
+### Café am Neuen See
+- Type: Café / beer garden
+- Neighbourhood: Tiergarten
+- Cuisine: German / beer garden
+- Price level: $$
+- Tags: outdoor, scenic, relaxed
+- Summary: A beautiful beer garden in the middle of Tiergarten park, perfect for a relaxed break.
+
+---
+
+## Schöneberg
+
+### Benedict Berlin
+- Type: Café / brunch
+- Neighbourhood: Schöneberg
+- Cuisine: International
+- Price level: $$
+- Tags: brunch, popular, all-day breakfast
+- Summary: Known for all-day breakfast and large portions. Very popular and often busy.

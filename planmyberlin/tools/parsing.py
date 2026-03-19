@@ -75,6 +75,11 @@ def parse_sights(sights_docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     out: List[Dict[str, Any]] = []
     for d in sights_docs:
         item = parse_sight_doc(d)
+        # Many retrieved chunks are higher-level section headings (e.g. a global header)
+        # and don't contain a concrete "### <Place name>" entry. Skip those so the
+        # itinerary doesn't end up with placeholder "Unknown" segments.
+        if item.get("name") == "Unknown":
+            continue
         key = (item["name"], item["neighbourhood"])
         if key in seen:
             continue
@@ -89,6 +94,9 @@ def parse_restaurants(restaurants_docs: List[Dict[str, Any]]) -> List[Dict[str, 
     out: List[Dict[str, Any]] = []
     for d in restaurants_docs:
         item = parse_restaurant_doc(d)
+        # Skip non-item chunks that don't contain a concrete "### <Restaurant name>" entry.
+        if item.get("name") == "Unknown":
+            continue
         key = (item["name"], item["neighbourhood"])
         if key in seen:
             continue

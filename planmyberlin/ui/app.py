@@ -21,7 +21,7 @@ from planmyberlin.tools.pipeline import plan_itinerary_from_request
 
 MAX_INPUT_CHARS: Final[int] = 800
 MAX_REQUESTS_PER_SESSION: Final[int] = 15
-PIPELINE_CACHE_VERSION: Final[str] = "v4"  # bump when pipeline output schema changes
+PIPELINE_CACHE_VERSION: Final[str] = "v5"  # bump when planner logic changes
 OPENAI_TRIP_PROFILE_MODEL: Final[str] = "gpt-4o-mini"
 GEMINI_TRIP_PROFILE_MODEL: Final[str] = "gemini-2.5-flash"
 INJECTION_PHRASES: Final[tuple[str, ...]] = (
@@ -135,7 +135,17 @@ def main() -> None:
 
         # Template builder (no extra LLM calls, just string composition)
         st.markdown("### Template builder")
-        known_districts = ["Mitte", "Kreuzberg", "Prenzlauer Berg", "Friedrichshain", "Neukölln", "Charlottenburg"]
+        known_districts = [
+            "Mitte",
+            "Kreuzberg",
+            "Prenzlauer Berg",
+            "Friedrichshain",
+            "Neukölln",
+            "Charlottenburg",
+            "Tiergarten",
+            "Schöneberg",
+            "Wedding",
+        ]
 
         colA, colB = st.columns(2)
         with colA:
