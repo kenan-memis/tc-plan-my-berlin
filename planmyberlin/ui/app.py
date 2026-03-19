@@ -60,7 +60,6 @@ def main() -> None:
     st.set_page_config(page_title="PlanMyBerlin", page_icon="🗺️", layout="wide")
 
     st.title("PlanMyBerlin – Berlin Trip Planner")
-    st.caption("Sprint 2 – Building Applications with LangChain, RAGs, and Streamlit")
 
     st.info(
         "Informational only. No real-time availability, bookings, or live routing. "
@@ -253,6 +252,16 @@ def main() -> None:
     result = st.session_state.get("last_result")
     if not result:
         st.info("Enter your trip request above and click **Generate plan** to see an itinerary and budget.")
+        # Footer (bottom-of-page) should still show even without a generated plan.
+        st.markdown(
+            """
+            <div style="margin-top:2rem; padding-top:0.75rem; border-top:1px solid #e9ecef; color:#6c757d; font-size:0.9em; text-align:center; line-height:1.4;">
+              <div>Sprint 2 – Building Applications with LangChain, RAGs, and Streamlit</div>
+              <div>Turing College 2026</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         return
 
     profile = result.get("profile") or {}
@@ -570,6 +579,17 @@ def main() -> None:
     # Sources
     st.caption(
         f"Plan built from {context.get('sights_count', 0)} sight snippets and {context.get('restaurants_count', 0)} restaurant snippets in the Berlin knowledge base."
+    )
+
+    # Footer (bottom-of-page)
+    st.markdown(
+        """
+        <div style="margin-top:2rem; padding-top:0.75rem; border-top:1px solid #e9ecef; color:#6c757d; font-size:0.9em; text-align:center; line-height:1.4;">
+          <div>Sprint 2 – Building Applications with LangChain, RAGs, and Streamlit</div>
+          <div>Turing College 2026</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 
