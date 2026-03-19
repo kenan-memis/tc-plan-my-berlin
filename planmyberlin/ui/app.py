@@ -60,21 +60,16 @@ def main() -> None:
     st.set_page_config(page_title="PlanMyBerlin", page_icon="🗺️", layout="wide")
 
     st.title("PlanMyBerlin – Berlin Trip Planner")
-
-    st.info(
-        "Informational only. No real-time availability, bookings, or live routing. "
-        "Budgets are rough estimates; transport guidance is high-level."
-    )
-
     st.markdown(
-        "Describe your trip in a few words (e.g. *2 days, budget-friendly, mix cheap lunch and nicer dinner, Kreuzberg and Mitte*). "
-        "The assistant will suggest a day-by-day plan and rough budget."
+        "### Quick guide\n"
+        "- Informational only. No real-time availability, bookings, or live routing. Budgets are rough estimates; transport guidance is high-level.\n"
+        "- Describe your trip in a few words (e.g. *2 days, budget-friendly, mix cheap lunch and nicer dinner, Kreuzberg and Mitte*). The assistant will suggest a day-by-day plan and rough budget.\n"
+        "- Please select your AI Provider, then enter your trip request, and finally click **Generate plan** to see an itinerary and budget.",
     )
 
     st.divider()
-    st.subheader("TripProfile model (how we parse your request)")
     provider_choice = st.selectbox(
-        "Choose provider/model",
+        "AI provider",
         options=[
             f"OpenAI ({OPENAI_TRIP_PROFILE_MODEL})",
             f"Gemini ({GEMINI_TRIP_PROFILE_MODEL})",
@@ -251,7 +246,6 @@ def main() -> None:
 
     result = st.session_state.get("last_result")
     if not result:
-        st.info("Enter your trip request above and click **Generate plan** to see an itinerary and budget.")
         # Footer (bottom-of-page) should still show even without a generated plan.
         st.markdown(
             """
